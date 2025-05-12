@@ -1,5 +1,5 @@
-// home_screen.dart
 import 'package:flutter/material.dart';
+import 'search_screen.dart';  // SearchScreen을 import
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -7,11 +7,15 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // 만약 하단 탭 바가 있으니 AppBar만 있으면 됨
+      // 만약 하단 탭바가 있으니 AppBar만 있으면 됨
       appBar: AppBar(
         title: GestureDetector(
           onTap: () {
-            // 검색 화면으로 이동 혹은 다른 동작
+            // 검색 화면으로 이동
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const SearchScreen()),
+            );
           },
           child: Container(
             height: 40,
@@ -35,112 +39,136 @@ class HomeScreen extends StatelessWidget {
         ),
         actions: [
           IconButton(
+            tooltip: '알림',
             icon: const Icon(Icons.notifications_none),
             onPressed: () {},
           ),
           IconButton(
+            tooltip: '장바구니',
             icon: const Icon(Icons.shopping_bag_outlined),
             onPressed: () {},
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            // 1) 상단 배너 (가로 슬라이드)
-            SizedBox(
-              height: 200,
-              child: PageView(
-                children: [
-                  _BannerItem(imageUrl: 'https://example.com/banner1.png'),
-                  _BannerItem(imageUrl: 'https://example.com/banner2.png'),
-                  _BannerItem(imageUrl: 'https://example.com/banner3.png'),
-                ],
-              ),
-            ),
+      body: const _HomeContent(),
+    );
+  }
+}
 
-            // 2) 카테고리 탭 (가로 스크롤)
-            SizedBox(
-              height: 50,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: const [
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 8.0),
-                    child: Center(
-                      child: Text('추천', style: TextStyle(fontSize: 16)),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 8.0),
-                    child: Center(child: Text('발매정보')),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 8.0),
-                    child: Center(child: Text('랭킹')),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 8.0),
-                    child: Center(child: Text('럭셔리')),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 8.0),
-                    child: Center(child: Text('남성')),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 8.0),
-                    child: Center(child: Text('여성')),
-                  ),
-                  // 등등...
-                ],
-              ),
-            ),
+class _HomeContent extends StatelessWidget {
+  const _HomeContent({Key? key}) : super(key: key);
 
-            // 3) 원형 아이콘 메뉴(가로 스크롤) - KREAM DRAW, etc.
-            SizedBox(
-              height: 100,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: [
-                  _CircleCategory(
-                    iconUrl: 'https://example.com/draw.png',
-                    label: 'KREAM DRAW',
-                  ),
-                  _CircleCategory(
-                    iconUrl: 'https://example.com/recommend.png',
-                    label: '추천',
-                  ),
-                  _CircleCategory(
-                    iconUrl: 'https://example.com/price.png',
-                    label: '정가 아래',
-                  ),
-                  // ...
-                ],
-              ),
-            ),
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Column(
+        children: const [
+          _BannerSection(),
+          SizedBox(height: 16),
+          _CategoryTabSection(),
+          SizedBox(height: 16),
+          _CircleMenuSection(),
+          SizedBox(height: 16),
+          _ProductListSection(),
+        ],
+      ),
+    );
+  }
+}
 
-            // 4) 상품 목록 (예시)
-            Container(
-              margin: const EdgeInsets.symmetric(vertical: 16),
-              child: Column(
-                children: [
-                  _ProductCard(
-                    imageUrl: 'https://example.com/product1.png',
-                    name: 'Nike XYZ',
-                    price: 299000,
-                  ),
-                  _ProductCard(
-                    imageUrl: 'https://example.com/product2.png',
-                    name: 'Adidas ABC',
-                    price: 199000,
-                  ),
-                  // ...
-                ],
-              ),
-            ),
-          ],
+// 1) 상단 배너
+class _BannerSection extends StatelessWidget {
+  const _BannerSection({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 200,
+      child: PageView(
+        children: const [
+          _BannerItem(imageUrl: 'https://example.com/banner1.png'),
+          _BannerItem(imageUrl: 'https://example.com/banner2.png'),
+          _BannerItem(imageUrl: 'https://example.com/banner3.png'),
+        ],
+      ),
+    );
+  }
+}
+
+// 2) 카테고리 탭
+class _CategoryTabSection extends StatelessWidget {
+  const _CategoryTabSection({Key? key}) : super(key: key);
+
+  final List<String> categories = const [
+    '추천', '발매정보', '랭킹', '럭셔리', '남성', '여성'
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 50,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        itemBuilder: (ctx, i) => Center(
+          child: Text(
+            categories[i],
+            style: const TextStyle(fontSize: 16),
+          ),
+        ),
+        separatorBuilder: (_, __) => const SizedBox(width: 12),
+        itemCount: categories.length,
+      ),
+    );
+  }
+}
+
+// 3) 원형 아이콘 메뉴
+class _CircleMenuSection extends StatelessWidget {
+  const _CircleMenuSection({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final items = [
+      {'icon': 'https://example.com/draw.png', 'label': 'KREAM DRAW'},
+      {'icon': 'https://example.com/recommend.png', 'label': '추천'},
+      {'icon': 'https://example.com/price.png', 'label': '정가 아래'},
+    ];
+
+    return SizedBox(
+      height: 100,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        itemCount: items.length,
+        itemBuilder: (ctx, i) => _CircleCategory(
+          iconUrl: items[i]['icon']!,
+          label: items[i]['label']!,
         ),
       ),
+    );
+  }
+}
+
+// 4) 상품 리스트
+class _ProductListSection extends StatelessWidget {
+  const _ProductListSection({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final products = [
+      {'img': 'https://example.com/product1.png', 'name': 'Nike XYZ', 'price': 299000},
+      {'img': 'https://example.com/product2.png', 'name': 'Adidas ABC', 'price': 199000},
+    ];
+
+    return Column(
+      children: products.map((p) {
+        return _ProductCard(
+          imageUrl: p['img'] as String,
+          name: p['name'] as String,
+          price: p['price'] as int,
+        );
+      }).toList(),
     );
   }
 }
@@ -160,7 +188,7 @@ class _CircleCategory extends StatelessWidget {
   final String iconUrl;
   final String label;
   const _CircleCategory({Key? key, required this.iconUrl, required this.label})
-    : super(key: key);
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -197,11 +225,11 @@ class _ProductCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: Image.network(imageUrl, width: 50, height: 50),
+      leading: Image.network(imageUrl, width: 50, height: 50, fit: BoxFit.cover),
       title: Text(name),
-      subtitle: Text('₩$price'),
+      subtitle: Text('₩${price.toString()}'),
       onTap: () {
-        // 상품 상세로 이동
+        // TODO: 상품 상세 화면으로 이동
       },
     );
   }
