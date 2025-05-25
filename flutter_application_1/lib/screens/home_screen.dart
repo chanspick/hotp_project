@@ -7,11 +7,9 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // 만약 하단 탭바가 있으니 AppBar만 있으면 됨
       appBar: AppBar(
         title: GestureDetector(
           onTap: () {
-            // 검색 화면으로 이동
             Navigator.push(
               context,
               MaterialPageRoute(builder: (_) => const SearchScreen()),
@@ -25,13 +23,17 @@ class HomeScreen extends StatelessWidget {
             ),
             padding: const EdgeInsets.symmetric(horizontal: 16),
             alignment: Alignment.centerLeft,
+            // Row overflow 방지: Expanded로 텍스트 감싸기
             child: Row(
               children: const [
                 Icon(Icons.search, color: Colors.grey),
                 SizedBox(width: 8),
-                Text(
-                  "브랜드, 상품, 프로필, 태그 등",
-                  style: TextStyle(color: Colors.grey),
+                Expanded(
+                  child: Text(
+                    "브랜드, 상품, 프로필, 태그 등",
+                    style: TextStyle(color: Colors.grey),
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
               ],
             ),
@@ -76,26 +78,25 @@ class _HomeContent extends StatelessWidget {
   }
 }
 
-// 1) 상단 배너
 class _BannerSection extends StatelessWidget {
   const _BannerSection({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    // 실제 존재하는 이미지 URL로 대체하거나, 에러 핸들러 추가
     return SizedBox(
       height: 200,
       child: PageView(
         children: const [
-          _BannerItem(imageUrl: 'https://example.com/banner1.png'),
-          _BannerItem(imageUrl: 'https://example.com/banner2.png'),
-          _BannerItem(imageUrl: 'https://example.com/banner3.png'),
+          _BannerItem(imageUrl: 'https://via.placeholder.com/400x200?text=Banner1'),
+          _BannerItem(imageUrl: 'https://via.placeholder.com/400x200?text=Banner2'),
+          _BannerItem(imageUrl: 'https://via.placeholder.com/400x200?text=Banner3'),
         ],
       ),
     );
   }
 }
 
-// 2) 카테고리 탭
 class _CategoryTabSection extends StatelessWidget {
   const _CategoryTabSection({Key? key}) : super(key: key);
 
@@ -123,16 +124,15 @@ class _CategoryTabSection extends StatelessWidget {
   }
 }
 
-// 3) 원형 아이콘 메뉴
 class _CircleMenuSection extends StatelessWidget {
   const _CircleMenuSection({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final items = [
-      {'icon': 'https://example.com/draw.png', 'label': 'KREAM DRAW'},
-      {'icon': 'https://example.com/recommend.png', 'label': '추천'},
-      {'icon': 'https://example.com/price.png', 'label': '정가 아래'},
+      {'icon': 'https://via.placeholder.com/48?text=Draw', 'label': 'KREAM DRAW'},
+      {'icon': 'https://via.placeholder.com/48?text=추천', 'label': '추천'},
+      {'icon': 'https://via.placeholder.com/48?text=정가', 'label': '정가 아래'},
     ];
 
     return SizedBox(
@@ -150,15 +150,14 @@ class _CircleMenuSection extends StatelessWidget {
   }
 }
 
-// 4) 상품 리스트
 class _ProductListSection extends StatelessWidget {
   const _ProductListSection({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final products = [
-      {'img': 'https://example.com/product1.png', 'name': 'Nike XYZ', 'price': 299000},
-      {'img': 'https://example.com/product2.png', 'name': 'Adidas ABC', 'price': 199000},
+      {'img': 'https://via.placeholder.com/50?text=NK', 'name': 'Nike XYZ', 'price': 299000},
+      {'img': 'https://via.placeholder.com/50?text=AD', 'name': 'Adidas ABC', 'price': 199000},
     ];
 
     return Column(
@@ -173,14 +172,21 @@ class _ProductListSection extends StatelessWidget {
   }
 }
 
-// 아래는 임시 예시용 위젯들
 class _BannerItem extends StatelessWidget {
   final String imageUrl;
   const _BannerItem({Key? key, required this.imageUrl}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Image.network(imageUrl, fit: BoxFit.cover);
+    return Image.network(
+      imageUrl,
+      fit: BoxFit.cover,
+      errorBuilder: (context, error, stackTrace) => Container(
+        color: Colors.grey[300],
+        alignment: Alignment.center,
+        child: const Icon(Icons.broken_image, size: 40, color: Colors.grey),
+      ),
+    );
   }
 }
 
@@ -198,7 +204,12 @@ class _CircleCategory extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          CircleAvatar(radius: 24, backgroundImage: NetworkImage(iconUrl)),
+          CircleAvatar(
+            radius: 24,
+            backgroundImage: NetworkImage(iconUrl),
+            backgroundColor: Colors.grey[200],
+            onBackgroundImageError: (_, __) {},
+          ),
           const SizedBox(height: 4),
           Text(
             label,
@@ -225,7 +236,22 @@ class _ProductCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: Image.network(imageUrl, width: 50, height: 50, fit: BoxFit.cover),
+      leading: ClipRRect(
+        borderRadius: BorderRadius.circular(8),
+        child: Image.network(
+          imageUrl,
+          width: 50,
+          height: 50,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) => Container(
+            width: 50,
+            height: 50,
+            color: Colors.grey[300],
+            alignment: Alignment.center,
+            child: const Icon(Icons.broken_image, color: Colors.grey),
+          ),
+        ),
+      ),
       title: Text(name),
       subtitle: Text('₩${price.toString()}'),
       onTap: () {

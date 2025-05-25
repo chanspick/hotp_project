@@ -1,0 +1,66 @@
+# Uncomment 이 줄을 주석 해제하고 프로젝트의 최소 iOS 배포 버전을 명시하세요.
+# 예: 13.0 또는 그 이상을 권장합니다.
+platform :ios, '13.0'
+
+# CocoaPods 분석 정보 전송을 비활성화하여 빌드 지연 시간 감소
+ENV['COCOAPODS_DISABLE_STATS'] = 'true'
+
+project 'Runner', {
+  'Debug' => :debug,
+  'Profile' => :release,
+  'Release' => :release,
+}
+
+def flutter_root
+  generated_xcode_build_settings_path = File.expand_path(File.join('..', 'Flutter', 'Generated.xcconfig'), __FILE__)
+  unless File.exist?(generated_xcode_build_settings_path)
+    raise "#{generated_xcode_build_settings_path} must exist. If you're running pod install manually, make sure flutter pub get is executed first"
+  end
+
+  File.foreach(generated_xcode_build_settings_path) do |line|
+    matches = line.match(/FLUTTER_ROOT\=(.*)/)
+    return matches[1].strip if matches
+  end
+  raise "FLUTTER_ROOT not found in #{generated_xcode_build_settings_path}. Try deleting Generated.xcconfig, then run flutter pub get"
+end
+
+require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelper'), flutter_root)
+
+flutter_ios_podfile_setup
+
+target 'Runner' do
+  use_frameworks!
+  use_modular_headers! # 모듈 헤더 사용 (Swift와 Objective-C 혼용 시 및 일부 Pod에 필요)
+  flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
+
+  # RunnerTests 타겟이 Runner 내부에 있는 구조를 유지합니다.
+  target 'RunnerTests' do
+    inherit! :search_paths
+    # RunnerTests에 필요한 테스트 전용 Pod이 있다면 여기에 추가합니다.
+    # 예: pod 'OCMock', '~> 2.0.1'
+  end
+end
+
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+    flutter_additional_ios_build_settings(target)
+
+    # Xcode 16의 -G 옵션 관련 빌드 오류 수정
+    if target.name == 'BoringSSL-GRPC'
+      target.source_build_phase.files.each do |file_ref| # 'source_build_phase' 사용
+        if file_ref.settings && file_ref.settings['COMPILER_FLAGS']
+          compiler_flags = file_ref.settings['COMPILER_FLAGS'].split
+          compiler_flags.reject! { |flag| flag == '-GCC_WARN_INHIBIT_ALL_WARNINGS' }
+          compiler_flags.reject! { |flag| flag == '-Werror' }
+          # 명확히 "-G"가 문제라면 아래 주석 해제
+          # compiler_flags.reject! { |flag| flag == '-G' }
+          file_ref.settings['COMPILER_FLAGS'] = compiler_flags.join(' ')
+        end
+      end
+    end
+
+    target.build_configurations.each do |config|
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0' # 최소 배포 버전 설정
+    end
+  end
+end
