@@ -1,4 +1,3 @@
-// main_page.dart
 import 'package:flutter/material.dart';
 import 'home_screen.dart';
 import 'part_shop_screen.dart';
