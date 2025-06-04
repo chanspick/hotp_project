@@ -327,7 +327,10 @@ class _PriceGraphPainter extends CustomPainter {
       if (priceHistory.isNotEmpty) {
         final x = size.width / 2;
         final y = size.height / 2;
-        canvas.drawCircle(Offset(x,y) , 2, paint..style = PaintingStyle.fill);
+        final fillPaint = Paint()
+          ..color = paint.color
+          ..style = PaintingStyle.fill;
+        canvas.drawCircle(Offset(x, y), 2, fillPaint);
       }
       return;
     }
