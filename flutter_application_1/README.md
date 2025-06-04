@@ -14,3 +14,7 @@ A few resources to get you started if this is your first Flutter project:
 For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
+
+### Generated iOS configuration
+
+Running `flutter pub get` generates `ios/Flutter/Generated.xcconfig`. If you encounter configuration issues, delete this file and run `flutter pub get` again to regenerate it.
