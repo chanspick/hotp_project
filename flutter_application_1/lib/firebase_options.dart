@@ -46,7 +46,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '937489643638',
     projectId: 'computer-platform-5fe23',
     authDomain: 'computer-platform-5fe23.firebaseapp.com',
-    storageBucket: 'computer-platform-5fe23.firebasestorage.app',
+    storageBucket: 'computer-platform-5fe23.appspot.com',
     measurementId: 'G-L2XZQ8F7NT',
   );
 
@@ -55,7 +55,7 @@ class DefaultFirebaseOptions {
     appId: '1:937489643638:android:a787c501f455e5ddc7c757',
     messagingSenderId: '937489643638',
     projectId: 'computer-platform-5fe23',
-    storageBucket: 'computer-platform-5fe23.firebasestorage.app',
+    storageBucket: 'computer-platform-5fe23.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
@@ -63,7 +63,7 @@ class DefaultFirebaseOptions {
     appId: '1:937489643638:ios:bd93a2df609618d7c7c757',
     messagingSenderId: '937489643638',
     projectId: 'computer-platform-5fe23',
-    storageBucket: 'computer-platform-5fe23.firebasestorage.app',
+    storageBucket: 'computer-platform-5fe23.appspot.com',
     iosBundleId: 'com.example.flutterApplication1',
   );
 
@@ -72,7 +72,7 @@ class DefaultFirebaseOptions {
     appId: '1:937489643638:ios:bd93a2df609618d7c7c757',
     messagingSenderId: '937489643638',
     projectId: 'computer-platform-5fe23',
-    storageBucket: 'computer-platform-5fe23.firebasestorage.app',
+    storageBucket: 'computer-platform-5fe23.appspot.com',
     iosBundleId: 'com.example.flutterApplication1',
   );
 
@@ -82,7 +82,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '937489643638',
     projectId: 'computer-platform-5fe23',
     authDomain: 'computer-platform-5fe23.firebaseapp.com',
-    storageBucket: 'computer-platform-5fe23.firebasestorage.app',
+    storageBucket: 'computer-platform-5fe23.appspot.com',
     measurementId: 'G-BGHQHTJ67B',
   );
 
