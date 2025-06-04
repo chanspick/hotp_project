@@ -16,3 +16,15 @@ cd flutter_application_1
 flutter pub get
 flutter run
 ```
+
+## Preparing iOS Dependencies
+
+Run the following commands before building the iOS version of the app:
+
+```bash
+flutter pub get
+flutter precache --ios  # downloads Flutter.xcframework needed for CocoaPods
+cd ios
+pod install
+cd ..
+```
